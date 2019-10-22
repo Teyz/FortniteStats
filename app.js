@@ -34,7 +34,6 @@ function checkRarity() {
 function getStats(name, platform, tweetId, userName) {
   fortnite.user(name, platform)
     .then(stats => {
-      console.log(stats);
       if (stats.code === 404) {
         postTweetError(tweetId, userName, stats.error + ". Please try with a valid player.");
       } else {
