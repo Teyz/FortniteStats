@@ -34,46 +34,50 @@ function checkRarity() {
 function getStats(name, platform, tweetId, userName) {
   fortnite.user(name, platform)
     .then(stats => {
-      var dataStats =
-      {
-        'tweetId': tweetId,
-        'userName': userName,
-        'player': name,
-        'lifetime':
+      if (stats.code === 404) {
+        postTweetError(tweetId, userName, stats.error);
+      } else {
+        var dataStats =
         {
-          'wins': stats.stats.lifetime.wins,
-          'win': (stats.stats.lifetime.wins / stats.stats.lifetime.matches) * 100,
-          'kills': stats.stats.lifetime.kills,
-          'kd': stats.stats.lifetime.kd
-        },
-        'solo':
-        {
-          'wins': stats.stats.solo.wins,
-          'win': (stats.stats.solo.wins / stats.stats.solo.matches) * 100,
-          'kills': stats.stats.solo.kills,
-          'kd': stats.stats.solo.kd,
-          'kills_match': stats.stats.solo.kills_per_match,
-          'matches': stats.stats.solo.matches
-        },
-        'duo':
-        {
-          'wins': stats.stats.duo.wins,
-          'win': (stats.stats.duo.wins / stats.stats.duo.matches) * 100,
-          'kills': stats.stats.duo.kills,
-          'kd': stats.stats.duo.kd,
-          'kills_match': stats.stats.duo.kills_per_match,
-          'matches': stats.stats.duo.matches
-        },
-        'squad':
-        {
-          'wins': stats.stats.squad.wins,
-          'win': (stats.stats.squad.wins / stats.stats.squad.matches) * 100,
-          'kills': stats.stats.squad.kills,
-          'kd': stats.stats.squad.kd,
-          'kills_match': stats.stats.squad.kills_per_match,
-          'matches': stats.stats.squad.matches
-        }
-      };
+          'tweetId': tweetId,
+          'userName': userName,
+          'player': name,
+          'lifetime':
+          {
+            'wins': stats.stats.lifetime.wins,
+            'win': (stats.stats.lifetime.wins / stats.stats.lifetime.matches) * 100,
+            'kills': stats.stats.lifetime.kills,
+            'kd': stats.stats.lifetime.kd
+          },
+          'solo':
+          {
+            'wins': stats.stats.solo.wins,
+            'win': (stats.stats.solo.wins / stats.stats.solo.matches) * 100,
+            'kills': stats.stats.solo.kills,
+            'kd': stats.stats.solo.kd,
+            'kills_match': stats.stats.solo.kills_per_match,
+            'matches': stats.stats.solo.matches
+          },
+          'duo':
+          {
+            'wins': stats.stats.duo.wins,
+            'win': (stats.stats.duo.wins / stats.stats.duo.matches) * 100,
+            'kills': stats.stats.duo.kills,
+            'kd': stats.stats.duo.kd,
+            'kills_match': stats.stats.duo.kills_per_match,
+            'matches': stats.stats.duo.matches
+          },
+          'squad':
+          {
+            'wins': stats.stats.squad.wins,
+            'win': (stats.stats.squad.wins / stats.stats.squad.matches) * 100,
+            'kills': stats.stats.squad.kills,
+            'kd': stats.stats.squad.kd,
+            'kills_match': stats.stats.squad.kills_per_match,
+            'matches': stats.stats.squad.matches
+          }
+        };
+      }
       createCanvasStats(dataStats);
     });
 }
@@ -93,19 +97,28 @@ function postTweetWithMediaStats(tweetId, userName, player) {
   var filePath = './' + player + '.png';
   twitter.postMediaChunked({ file_path: filePath }, function (err, data, response) {
     if (err) throw err;
-    var params = { 
+    var params = {
       in_reply_to_status_id: tweetId,
       status: "@" + userName + " Here are your statistics.",
-      media_ids: [data.media_id_string] 
+      media_ids: [data.media_id_string]
     }
     twitter.post('statuses/update', params, function (err, data, response) {
       if (err) throw err;
-      require("fs").DeleteFile(player + ".png", base64Data, 'base64', function (err) {
-        if (err) {
-          throw err
-        }
+      require("fs").unlink(player + ".png", function (err) {
+        if (err) throw err;
       });
     });
+  });
+  return false;
+}
+
+function postTweetError(tweetId, userName, errorMessage) {
+  var params = {
+    in_reply_to_status_id: tweetId,
+    status: "@" + userName + " " + errorMessage + ". Please try with a valid player.",
+  }
+  twitter.post('statuses/update', params, function (err, data, response) {
+    if (err) throw err;
   });
   return false;
 }
@@ -140,7 +153,7 @@ function getStatus() {
     })
 }
 
-function fontFile (name) {
+function fontFile(name) {
   return path.join(__dirname, '/font/', name);
 }
 
@@ -157,7 +170,7 @@ function createCanvasStats(dataStats) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-  var gradient = ctx.createLinearGradient(0,0,100,0);
+  var gradient = ctx.createLinearGradient(0, 0, 100, 0);
   gradient.addColorStop(0, '#ff4b4b');
   gradient.addColorStop(1, '#f73030');
   ctx.fillStyle = gradient;
@@ -203,7 +216,7 @@ function onAuthenticated(err, res) {
       // setInterval(() => {
       //   getStatus();
       // }, 2000);
-      Canvas.registerFont(fontFile('ROBOTO-BLACK.TTF'), {family: 'Roboto'});
+      Canvas.registerFont(fontFile('ROBOTO-BLACK.TTF'), { family: 'Roboto' });
       checkTweet();
     })
 }
