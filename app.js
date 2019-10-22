@@ -3,13 +3,13 @@ const config = require('./config.js');
 const axios = require('axios');
 const Client = require('fortnite');
 
-var T = new Twitter(config);
+var twitter = new Twitter(config);
 var fortnite = new Client('8d2c9df7-ca0a-4e83-8044-58b23fa32870');
 
 var isFtnStatusTweetedOn = true;
 var isFtnStatusTweetedOff = false;
 
-T.get('account/verify_credentials', {
+twitter.get('account/verify_credentials', {
   include_entities: false,
   skip_status: true,
   include_email: false
@@ -82,7 +82,7 @@ function getStats(name, platform) {
 }
 
 function checkTweet() {
-  var stream = T.stream('statuses/filter', { track: '#FortniteStats' })
+  var stream = twitter.stream('statuses/filter', { track: '#FortniteStats' })
   stream.on('tweet', function (tweet) {
     var text = tweet.text;
     var tweetId = tweet.id_str;
@@ -94,7 +94,7 @@ function checkTweet() {
 }
 
 function replyTweet(tweetId, userName) {
-  T.post('statuses/update', {
+  twitter.post('statuses/update', {
     in_reply_to_status_id: tweetId,
     status: "@" + userName + " Wohoh"
   }, function (err, data, response) {
@@ -174,11 +174,11 @@ function postTweetWithMediaStatus(dataStatus) {
   } else {
     var filePath = './online.png';
   }
-  T.postMediaChunked({ file_path: filePath }, function (err, data, response) {
+  twitter.postMediaChunked({ file_path: filePath }, function (err, data, response) {
     console.log("Tweet chargé");
     if (err) throw err;
     var params = { status: dataStatus.message, media_ids: [data.media_id_string] }
-    T.post('statuses/update', params, function (err, data, response) {
+    twitter.post('statuses/update', params, function (err, data, response) {
       console.log("Tweet posté");
       if (err) throw err;
     });
@@ -191,7 +191,7 @@ function onAuthenticated(err, res) {
     throw err
   }
   console.log("App started successfully 🤲🤲");
-  T.get('account/verify_credentials', { skip_status: true })
+  twitter.get('account/verify_credentials', { skip_status: true })
     .catch(function (err) {
       console.log('caught error', err.stack)
     })
