@@ -2,6 +2,8 @@ const Twitter = require('twit');
 const config = require('./config.js');
 const axios = require('axios');
 const Client = require('fortnite');
+const Canvas = require('canvas');
+const path = require('path');
 
 var twitter = new Twitter(config);
 var fortnite = new Client('8d2c9df7-ca0a-4e83-8044-58b23fa32870');
@@ -36,11 +38,13 @@ function getStore() {
 function checkRarity() {
 }
 
-function getStats(name, platform) {
+function getStats(name, platform, tweetId, userName) {
   fortnite.user(name, platform)
     .then(stats => {
       var dataStats =
       {
+        'tweetId': tweetId,
+        'userName': userName,
         'player': name,
         'lifetime':
         {
@@ -56,7 +60,7 @@ function getStats(name, platform) {
           'kills': stats.stats.solo.kills,
           'kd': stats.stats.solo.kd,
           'kills_match': stats.stats.solo.kills_per_match,
-          'matches:': stats.stats.solo.matches
+          'matches': stats.stats.solo.matches
         },
         'duo':
         {
@@ -65,7 +69,7 @@ function getStats(name, platform) {
           'kills': stats.stats.duo.kills,
           'kd': stats.stats.duo.kd,
           'kills_match': stats.stats.duo.kills_per_match,
-          'matches:': stats.stats.duo.matches
+          'matches': stats.stats.duo.matches
         },
         'squad':
         {
@@ -74,7 +78,7 @@ function getStats(name, platform) {
           'kills': stats.stats.squad.kills,
           'kd': stats.stats.squad.kd,
           'kills_match': stats.stats.squad.kills_per_match,
-          'matches:': stats.stats.squad.matches
+          'matches': stats.stats.squad.matches
         }
       };
       createCanvasStats(dataStats);
@@ -88,8 +92,7 @@ function checkTweet() {
     var tweetId = tweet.id_str;
     var userName = tweet.user.screen_name;
     var dataUser = checkTweetRegex(text);
-    getStats(dataUser.name, dataUser.platform);
-    //replyTweet(tweetId, userName);
+    getStats(dataUser.name, dataUser.platform, tweetId, userName);
   });
 }
 
@@ -100,6 +103,30 @@ function replyTweet(tweetId, userName) {
   }, function (err, data, response) {
     console.log(data);
   })
+}
+
+function postTweetWithMediaStats(tweetId, userName, player) {
+  console.log("Début");
+  var filePath = './' + player + '.png';
+  twitter.postMediaChunked({ file_path: filePath }, function (err, data, response) {
+    console.log("Tweet chargé");
+    if (err) throw err;
+    var params = { 
+      in_reply_to_status_id: tweetId,
+      status: "@" + userName + " Here are your statistics.",
+      media_ids: [data.media_id_string] 
+    }
+    twitter.post('statuses/update', params, function (err, data, response) {
+      console.log("Tweet posté");
+      if (err) throw err;
+      require("fs").DeleteFile(dataStats.player + ".png", base64Data, 'base64', function (err) {
+        if (err) {
+          throw err
+        }
+      });
+    });
+  });
+  return false;
 }
 
 function checkTweetRegex(tweet) {
@@ -134,8 +161,6 @@ function getStatus() {
 
 function createCanvasStats(dataStats) {
   console.log(dataStats);
-  var Canvas = require('canvas');
-  var path = require('path');
 
   function fontFile (name) {
     return path.join(__dirname, '/font/', name);
@@ -163,7 +188,10 @@ function createCanvasStats(dataStats) {
 
   var base64Data = canvas.toDataURL().replace(/^data:image\/png;base64,/, "");
   require("fs").writeFile(dataStats.player + ".png", base64Data, 'base64', function (err) {
-    console.log(err);  
+    if (err) {
+      throw err
+    }
+    postTweetWithMediaStats(dataStats.tweetId, dataStats.userName, dataStats.player);
   });
 }
 
@@ -199,6 +227,6 @@ function onAuthenticated(err, res) {
       // setInterval(() => {
       //   getStatus();
       // }, 2000);
-      getStats("Snutle","pc");
+      checkTweet();
     })
 }
