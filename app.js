@@ -34,8 +34,9 @@ function checkRarity() {
 function getStats(name, platform, tweetId, userName) {
   fortnite.user(name, platform)
     .then(stats => {
+      console.log(stats);
       if (stats.code === 404) {
-        postTweetError(tweetId, userName, stats.error);
+        postTweetError(tweetId, userName, stats.error + ". Please try with a valid player.");
       } else {
         var dataStats =
         {
@@ -77,8 +78,8 @@ function getStats(name, platform, tweetId, userName) {
             'matches': stats.stats.squad.matches
           }
         };
+        createCanvasStats(dataStats);
       }
-      createCanvasStats(dataStats);
     });
 }
 
@@ -89,7 +90,11 @@ function checkTweet() {
     var tweetId = tweet.id_str;
     var userName = tweet.user.screen_name;
     var dataUser = checkTweetRegex(text);
-    getStats(dataUser.name, dataUser.platform, tweetId, userName);
+    if (dataUser === false) {
+      postTweetError(tweetId, userName, 'Invalid platform. Supported platforms are: pc / xbox / psn.');
+    } else {
+      getStats(dataUser.name, dataUser.platform, tweetId, userName);
+    }
   });
 }
 
@@ -115,7 +120,7 @@ function postTweetWithMediaStats(tweetId, userName, player) {
 function postTweetError(tweetId, userName, errorMessage) {
   var params = {
     in_reply_to_status_id: tweetId,
-    status: "@" + userName + " " + errorMessage + ". Please try with a valid player.",
+    status: "@" + userName + " " + errorMessage,
   }
   twitter.post('statuses/update', params, function (err, data, response) {
     if (err) throw err;
@@ -127,7 +132,11 @@ function checkTweetRegex(tweet) {
   var regex = /(#\w+)\s([\w ]+)+\s(\w+)/;
   var pseudo = tweet.replace(regex, "$2");
   var platform = tweet.replace(regex, "$3");
-  var dataUser = { 'name': pseudo, 'platform': platform };
+  if ( (platform === 'pc') || (platform === 'xbox') || (platform === 'psn') ) {
+    var dataUser = { 'name': pseudo, 'platform': platform };
+  } else {
+    return false;
+  }
   return dataUser;
 }
 
