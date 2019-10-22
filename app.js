@@ -17,13 +17,6 @@ twitter.get('account/verify_credentials', {
   include_email: false
 }, onAuthenticated)
 
-function postTweet(tweet) {
-  T.post('statuses/update', { status: tweet }, function (error, tweet, response) {
-    if (error) throw error;
-    console.log(tweet);
-  });
-}
-
 function getStore() {
   fortnite.store()
     .then(store => {
@@ -96,20 +89,9 @@ function checkTweet() {
   });
 }
 
-function replyTweet(tweetId, userName) {
-  twitter.post('statuses/update', {
-    in_reply_to_status_id: tweetId,
-    status: "@" + userName + " Wohoh"
-  }, function (err, data, response) {
-    console.log(data);
-  })
-}
-
 function postTweetWithMediaStats(tweetId, userName, player) {
-  console.log("Début");
   var filePath = './' + player + '.png';
   twitter.postMediaChunked({ file_path: filePath }, function (err, data, response) {
-    console.log("Tweet chargé");
     if (err) throw err;
     var params = { 
       in_reply_to_status_id: tweetId,
@@ -117,9 +99,8 @@ function postTweetWithMediaStats(tweetId, userName, player) {
       media_ids: [data.media_id_string] 
     }
     twitter.post('statuses/update', params, function (err, data, response) {
-      console.log("Tweet posté");
       if (err) throw err;
-      require("fs").DeleteFile(dataStats.player + ".png", base64Data, 'base64', function (err) {
+      require("fs").DeleteFile(player + ".png", base64Data, 'base64', function (err) {
         if (err) {
           throw err
         }
@@ -159,14 +140,12 @@ function getStatus() {
     })
 }
 
+function fontFile (name) {
+  return path.join(__dirname, '/font/', name);
+}
+
 function createCanvasStats(dataStats) {
   console.log(dataStats);
-
-  function fontFile (name) {
-    return path.join(__dirname, '/font/', name);
-  }
-  
-  Canvas.registerFont(fontFile('ROBOTO-BLACK.TTF'), {family: 'Roboto'});
 
   var canvas = Canvas.createCanvas(1920, 1080);
   var ctx = canvas.getContext('2d');
@@ -196,18 +175,15 @@ function createCanvasStats(dataStats) {
 }
 
 function postTweetWithMediaStatus(dataStatus) {
-  console.log("Début");
   if (dataStatus.status == false) {
     var filePath = './offline.png';
   } else {
     var filePath = './online.png';
   }
   twitter.postMediaChunked({ file_path: filePath }, function (err, data, response) {
-    console.log("Tweet chargé");
     if (err) throw err;
     var params = { status: dataStatus.message, media_ids: [data.media_id_string] }
     twitter.post('statuses/update', params, function (err, data, response) {
-      console.log("Tweet posté");
       if (err) throw err;
     });
   });
@@ -227,6 +203,7 @@ function onAuthenticated(err, res) {
       // setInterval(() => {
       //   getStatus();
       // }, 2000);
+      Canvas.registerFont(fontFile('ROBOTO-BLACK.TTF'), {family: 'Roboto'});
       checkTweet();
     })
 }
