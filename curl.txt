@@ -1,6 +1,0 @@
-curl -H 'Client-ID: 039zxr4taqclx2s9ntngayj49v1efy' -X GET 'https://api.twitch.tv/helix/users?login=teyz_'
-
-id = 64149755
-
-Stream : curl -H 'Client-ID: 039zxr4taqclx2s9ntngayj49v1efy' \
--X GET 'https://api.twitch.tv/helix/streams?user_id=64149755'
