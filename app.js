@@ -2,8 +2,6 @@ const Twitter = require('twit');
 const config = require('./config.js');
 const axios = require('axios');
 const Client = require('fortnite');
-const Blob = require('blob');
-const FileSaver = require('file-saver');
 
 var T = new Twitter(config);
 var fortnite = new Client('8d2c9df7-ca0a-4e83-8044-58b23fa32870');
