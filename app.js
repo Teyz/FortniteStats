@@ -166,8 +166,6 @@ function fontFile(name) {
 }
 
 function createCanvasStats(dataStats) {
-  console.log(dataStats);
-
   var canvas = Canvas.createCanvas(1920, 1080);
   var ctx = canvas.getContext('2d');
 
