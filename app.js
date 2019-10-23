@@ -224,6 +224,6 @@ function onAuthenticated(err, res) {
       // }, 2000);
       //Canvas.registerFont(fontFile('ROBOTO-BLACK.TTF'), { family: 'Roboto' });
       //checkTweet();
-      getStore();
+      //getStore();
     })
 }
