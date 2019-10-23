@@ -45,14 +45,14 @@ function getStats(name, platform, tweetId, userName) {
           'lifetime':
           {
             'wins': stats.stats.lifetime.wins,
-            'win': (stats.stats.lifetime.wins / stats.stats.lifetime.matches) * 100,
+            'win': ((stats.stats.lifetime.wins / stats.stats.lifetime.matches) * 100).toFixed(2),
             'kills': stats.stats.lifetime.kills,
             'kd': stats.stats.lifetime.kd
           },
           'solo':
           {
             'wins': stats.stats.solo.wins,
-            'win': (stats.stats.solo.wins / stats.stats.solo.matches) * 100,
+            'win': ((stats.stats.solo.wins / stats.stats.solo.matches) * 100).toFixed(2),
             'kills': stats.stats.solo.kills,
             'kd': stats.stats.solo.kd,
             'kills_match': stats.stats.solo.kills_per_match,
@@ -61,7 +61,7 @@ function getStats(name, platform, tweetId, userName) {
           'duo':
           {
             'wins': stats.stats.duo.wins,
-            'win': (stats.stats.duo.wins / stats.stats.duo.matches) * 100,
+            'win': ((stats.stats.duo.wins / stats.stats.duo.matches) * 100).toFixed(2),
             'kills': stats.stats.duo.kills,
             'kd': stats.stats.duo.kd,
             'kills_match': stats.stats.duo.kills_per_match,
@@ -70,7 +70,7 @@ function getStats(name, platform, tweetId, userName) {
           'squad':
           {
             'wins': stats.stats.squad.wins,
-            'win': (stats.stats.squad.wins / stats.stats.squad.matches) * 100,
+            'win': ((stats.stats.squad.wins / stats.stats.squad.matches) * 100).toFixed(2),
             'kills': stats.stats.squad.kills,
             'kd': stats.stats.squad.kd,
             'kills_match': stats.stats.squad.kills_per_match,
@@ -182,7 +182,35 @@ function createCanvasStats(dataStats) {
   ctx.fillStyle = gradient;
   ctx.textAlign = 'center';
   ctx.font = '60pt Roboto';
-  ctx.fillText(dataStats.player, canvas.width/4.4, canvas.height/2.95);
+  ctx.fillText(dataStats.player, canvas.width/4.35, canvas.height/2.95);
+  ctx.textAlign = 'start';
+  ctx.font = '48pt Roboto';
+
+  ctx.fillText(dataStats.lifetime.wins, canvas.width/2.125, canvas.height/3.1);
+  ctx.fillText(dataStats.lifetime.win, canvas.width/1.655, canvas.height/3.1);
+  ctx.fillText(dataStats.lifetime.kills, canvas.width/1.38, canvas.height/3.1);
+  ctx.fillText(dataStats.lifetime.kd, canvas.width/1.15, canvas.height/3.1);
+
+  ctx.fillText(dataStats.solo.wins, canvas.width/10.65, canvas.height/1.6);
+  ctx.fillText(dataStats.solo.win, canvas.width/4.9, canvas.height/1.6);
+  ctx.fillText(dataStats.solo.kills, canvas.width/10.65, canvas.height/1.3);
+  ctx.fillText(dataStats.solo.kd, canvas.width/4.9, canvas.height/1.3);
+  ctx.fillText(dataStats.solo.kills_match, canvas.width/10.65, canvas.height/1.1);
+  ctx.fillText(dataStats.solo.matches, canvas.width/4.9, canvas.height/1.1);
+
+  ctx.fillText(dataStats.duo.wins, canvas.width/2.44, canvas.height/1.6);
+  ctx.fillText(dataStats.duo.win, canvas.width/1.9, canvas.height/1.6);
+  ctx.fillText(dataStats.duo.kills, canvas.width/2.44, canvas.height/1.3);
+  ctx.fillText(dataStats.duo.kd, canvas.width/1.9, canvas.height/1.3);
+  ctx.fillText(dataStats.duo.kills_match, canvas.width/2.44, canvas.height/1.1);
+  ctx.fillText(dataStats.duo.matches, canvas.width/1.9, canvas.height/1.1);
+
+  ctx.fillText(dataStats.squad.wins, canvas.width/1.375, canvas.height/1.6);
+  ctx.fillText(dataStats.squad.win, canvas.width/1.19, canvas.height/1.6);
+  ctx.fillText(dataStats.squad.kills, canvas.width/1.375, canvas.height/1.3);
+  ctx.fillText(dataStats.squad.kd, canvas.width/1.19, canvas.height/1.3);
+  ctx.fillText(dataStats.squad.kills_match, canvas.width/1.375, canvas.height/1.1);
+  ctx.fillText(dataStats.squad .matches, canvas.width/1.19, canvas.height/1.1);
 
   var base64Data = canvas.toDataURL().replace(/^data:image\/png;base64,/, "");
   require("fs").writeFile(dataStats.player + ".png", base64Data, 'base64', function (err) {
@@ -225,6 +253,6 @@ function onAuthenticated(err, res) {
       Canvas.registerFont(fontFile('ROBOTO-BLACK.TTF'), { family: 'Roboto' });
       //checkTweet();
       //getStore();
-      getStats("Flungued Teyz","pc",422,"Teyz");
+      getStats("Ninja","pc",422,"Teyz");
     })
 }
