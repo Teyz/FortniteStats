@@ -103,7 +103,7 @@ function postTweetWithMediaStats(tweetId, userName, player) {
     if (err) throw err;
     var params = {
       in_reply_to_status_id: tweetId,
-      status: "@" + userName + " Here are your statistics.",
+      status: "@" + userName + " Here are your #Fornite statistics.",
       media_ids: [data.media_id_string]
     }
     twitter.post('statuses/update', params, function (err, data, response) {
