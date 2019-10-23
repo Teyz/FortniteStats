@@ -222,7 +222,8 @@ function onAuthenticated(err, res) {
       // setInterval(() => {
       //   getStatus();
       // }, 2000);
-      Canvas.registerFont(fontFile('ROBOTO-BLACK.TTF'), { family: 'Roboto' });
-      checkTweet();
+      //Canvas.registerFont(fontFile('ROBOTO-BLACK.TTF'), { family: 'Roboto' });
+      //checkTweet();
+      getStore();
     })
 }
