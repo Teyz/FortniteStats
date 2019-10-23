@@ -131,7 +131,7 @@ function checkTweetRegex(tweet) {
   var regex = /(#\w+)\s([\w ]+)+\s(\w+)/;
   var pseudo = tweet.replace(regex, "$2");
   var platform = tweet.replace(regex, "$3");
-  if ( (platform === 'pc') || (platform === 'xbox') || (platform === 'psn') ) {
+  if ((platform === 'pc') || (platform === 'xbox') || (platform === 'psn')) {
     var dataUser = { 'name': pseudo, 'platform': platform };
   } else {
     return false;
@@ -180,16 +180,17 @@ function createCanvasStats(dataStats) {
   gradient.addColorStop(0, '#ff4b4b');
   gradient.addColorStop(1, '#f73030');
   ctx.fillStyle = gradient;
-  ctx.textAlign = 'center';
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
   ctx.font = '60pt Roboto';
-  ctx.fillText(dataStats.player, 440, 375);
+  ctx.fillText(dataStats.player, canvas.width / 4.35, canvas.height / 3.10);
 
   var base64Data = canvas.toDataURL().replace(/^data:image\/png;base64,/, "");
   require("fs").writeFile(dataStats.player + ".png", base64Data, 'base64', function (err) {
     if (err) {
       throw err
     }
-    postTweetWithMediaStats(dataStats.tweetId, dataStats.userName, dataStats.player);
+    //postTweetWithMediaStats(dataStats.tweetId, dataStats.userName, dataStats.player);
   });
 }
 
@@ -222,7 +223,8 @@ function onAuthenticated(err, res) {
       // setInterval(() => {
       //   getStatus();
       // }, 2000);
-      Canvas.registerFont(fontFile('ROBOTO-BLACK.TTF'), { family: 'Roboto' });
-      checkTweet();
+      //Canvas.registerFont(fontFile('ROBOTO-BLACK.TTF'), { family: 'Roboto' });
+      //checkTweet();
+      getStats("Flungued Teyz", "pc", 516515, "teyz");
     })
 }
