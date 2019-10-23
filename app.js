@@ -182,14 +182,14 @@ function createCanvasStats(dataStats) {
   ctx.fillStyle = gradient;
   ctx.textAlign = 'center';
   ctx.font = '60pt Roboto';
-  ctx.fillText(dataStats.player, 440, 375);
+  ctx.fillText(dataStats.player, canvas.width/4.4, canvas.height/2.95);
 
   var base64Data = canvas.toDataURL().replace(/^data:image\/png;base64,/, "");
   require("fs").writeFile(dataStats.player + ".png", base64Data, 'base64', function (err) {
     if (err) {
       throw err
     }
-    postTweetWithMediaStats(dataStats.tweetId, dataStats.userName, dataStats.player);
+    //postTweetWithMediaStats(dataStats.tweetId, dataStats.userName, dataStats.player);
   });
 }
 
@@ -222,8 +222,9 @@ function onAuthenticated(err, res) {
       // setInterval(() => {
       //   getStatus();
       // }, 2000);
-      //Canvas.registerFont(fontFile('ROBOTO-BLACK.TTF'), { family: 'Roboto' });
+      Canvas.registerFont(fontFile('ROBOTO-BLACK.TTF'), { family: 'Roboto' });
       //checkTweet();
       //getStore();
+      getStats("Flungued Teyz","pc",422,"Teyz");
     })
 }
