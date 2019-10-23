@@ -175,7 +175,6 @@ function createCanvasStats(dataStats) {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
   var gradient = ctx.createLinearGradient(0, 0, 100, 0);
   gradient.addColorStop(0, '#ff4b4b');
   gradient.addColorStop(1, '#f73030');
@@ -183,13 +182,14 @@ function createCanvasStats(dataStats) {
   ctx.textAlign = 'center';
   ctx.font = '60pt Roboto';
   ctx.fillText(dataStats.player, canvas.width/4.35, canvas.height/2.95);
-  ctx.textAlign = 'start';
   ctx.font = '48pt Roboto';
 
-  ctx.fillText(dataStats.lifetime.wins, canvas.width/2.125, canvas.height/3.1);
-  ctx.fillText(dataStats.lifetime.win, canvas.width/1.655, canvas.height/3.1);
-  ctx.fillText(dataStats.lifetime.kills, canvas.width/1.38, canvas.height/3.1);
-  ctx.fillText(dataStats.lifetime.kd, canvas.width/1.15, canvas.height/3.1);
+  ctx.fillText(dataStats.lifetime.wins, canvas.width/1.965, canvas.height/3.1);
+  ctx.fillText(dataStats.lifetime.win, canvas.width/1.545, canvas.height/3.1);
+  ctx.fillText(dataStats.lifetime.kills, canvas.width/1.279, canvas.height/3.1);
+  ctx.fillText(dataStats.lifetime.kd, canvas.width/1.097, canvas.height/3.1);
+
+  ctx.textAlign = 'start';
 
   ctx.fillText(dataStats.solo.wins, canvas.width/10.65, canvas.height/1.6);
   ctx.fillText(dataStats.solo.win, canvas.width/4.9, canvas.height/1.6);
