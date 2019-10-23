@@ -98,7 +98,7 @@ function checkTweet() {
 }
 
 function postTweetWithMediaStats(tweetId, userName, player) {
-  var filePath = './' + player + '.png';
+  var filePath = './img/' + player + '.png';
   twitter.postMediaChunked({ file_path: filePath }, function (err, data, response) {
     if (err) throw err;
     var params = {
@@ -108,7 +108,7 @@ function postTweetWithMediaStats(tweetId, userName, player) {
     }
     twitter.post('statuses/update', params, function (err, data, response) {
       if (err) throw err;
-      require("fs").unlink(player + ".png", function (err) {
+      require("fs").unlink('./img/' + player + ".png", function (err) {
         if (err) throw err;
       });
     });
@@ -171,7 +171,7 @@ function createCanvasStats(dataStats) {
 
   var Image = Canvas.Image;
   var img = new Image();
-  img.src = 'stats.jpg';
+  img.src = './img/stats.jpg';
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
@@ -213,19 +213,19 @@ function createCanvasStats(dataStats) {
   ctx.fillText(dataStats.squad .matches, canvas.width/1.19, canvas.height/1.1);
 
   var base64Data = canvas.toDataURL().replace(/^data:image\/png;base64,/, "");
-  require("fs").writeFile(dataStats.player + ".png", base64Data, 'base64', function (err) {
+  require("fs").writeFile('./img/' + dataStats.player + ".png", base64Data, 'base64', function (err) {
     if (err) {
       throw err
     }
-    //postTweetWithMediaStats(dataStats.tweetId, dataStats.userName, dataStats.player);
+    postTweetWithMediaStats(dataStats.tweetId, dataStats.userName, dataStats.player);
   });
 }
 
 function postTweetWithMediaStatus(dataStatus) {
   if (dataStatus.status == false) {
-    var filePath = './offline.png';
+    var filePath = './img/offline.png';
   } else {
-    var filePath = './online.png';
+    var filePath = './img/online.png';
   }
   twitter.postMediaChunked({ file_path: filePath }, function (err, data, response) {
     if (err) throw err;
@@ -251,8 +251,7 @@ function onAuthenticated(err, res) {
       //   getStatus();
       // }, 2000);
       Canvas.registerFont(fontFile('ROBOTO-BLACK.TTF'), { family: 'Roboto' });
-      //checkTweet();
+      checkTweet();
       //getStore();
-      getStats("Ninja","pc",422,"Teyz");
     })
 }
