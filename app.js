@@ -40,7 +40,7 @@ function getStats(name, platform, tweetId, userName) {
       if (stats.code === 404) {
         postTweetError(tweetId, userName, stats.error + ". Please try with a valid player.");
       } else {
-        createCanvasStats(stats.stats);
+        createCanvasStats(stats.stats, name, tweetId, userName);
       }
     });
 }
@@ -76,6 +76,8 @@ function postTweetWithMediaStats(tweetId, userName, player) {
       });
     });
   });
+  var millis = Date.now() - start;
+  console.log("seconds elapsed = " + millis);
   return false;
 }
 
@@ -128,11 +130,7 @@ function fontFile(name) {
   return path.join(__dirname, '/font/', name);
 }
 
-function putStatsOnCanvas(){
-
-}
-
-function createCanvasStats(dataStats) {
+function createCanvasStats(dataStats, player, tweetId, userName) {
   var canvas = Canvas.createCanvas(1920, 1080);
   var ctx = canvas.getContext('2d');
 
@@ -148,45 +146,43 @@ function createCanvasStats(dataStats) {
   ctx.fillStyle = gradient;
   ctx.textAlign = 'center';
   ctx.font = '60pt Roboto';
-  ctx.fillText(dataStats.player, canvas.width / 4.35, canvas.height / 2.95);
+  ctx.fillText(player, canvas.width / 4.35, canvas.height / 2.95);
   ctx.font = '48pt Roboto';
 
   ctx.fillText(dataStats.lifetime.wins, canvas.width / 1.965, canvas.height / 3.1);
-  ctx.fillText(((dataStats.lifetime.win / dataStats.lifetime.matches) * 100).toFixed(2), canvas.width / 1.545, canvas.height / 3.1);
+  ctx.fillText(((dataStats.lifetime.wins / dataStats.lifetime.matches) * 100).toFixed(2), canvas.width / 1.545, canvas.height / 3.1);
   ctx.fillText(dataStats.lifetime.kills, canvas.width / 1.279, canvas.height / 3.1);
   ctx.fillText(dataStats.lifetime.kd, canvas.width / 1.097, canvas.height / 3.1);
 
   ctx.textAlign = 'start';
 
   ctx.fillText(dataStats.solo.wins, canvas.width / 10.65, canvas.height / 1.6);
-  ctx.fillText(((dataStats.solo.win / dataStats.solo.matches) * 100).toFixed(2), canvas.width / 4.9, canvas.height / 1.6);
+  ctx.fillText(((dataStats.solo.wins / dataStats.solo.matches) * 100).toFixed(2), canvas.width / 4.9, canvas.height / 1.6);
   ctx.fillText(dataStats.solo.kills, canvas.width / 10.65, canvas.height / 1.3);
   ctx.fillText(dataStats.solo.kd, canvas.width / 4.9, canvas.height / 1.3);
-  ctx.fillText(dataStats.solo.kills_match, canvas.width / 10.65, canvas.height / 1.1);
+  ctx.fillText(dataStats.solo.kills_per_match, canvas.width / 10.65, canvas.height / 1.1);
   ctx.fillText(dataStats.solo.matches, canvas.width / 4.9, canvas.height / 1.1);
 
   ctx.fillText(dataStats.duo.wins, canvas.width / 2.44, canvas.height / 1.6);
-  ctx.fillText(((dataStats.duo.win / dataStats.duo.matches) * 100).toFixed(2), canvas.width / 1.9, canvas.height / 1.6);
+  ctx.fillText(((dataStats.duo.wins / dataStats.duo.matches) * 100).toFixed(2), canvas.width / 1.9, canvas.height / 1.6);
   ctx.fillText(dataStats.duo.kills, canvas.width / 2.44, canvas.height / 1.3);
   ctx.fillText(dataStats.duo.kd, canvas.width / 1.9, canvas.height / 1.3);
-  ctx.fillText(dataStats.duo.kills_match, canvas.width / 2.44, canvas.height / 1.1);
+  ctx.fillText(dataStats.duo.kills_per_match, canvas.width / 2.44, canvas.height / 1.1);
   ctx.fillText(dataStats.duo.matches, canvas.width / 1.9, canvas.height / 1.1);
 
   ctx.fillText(dataStats.squad.wins, canvas.width / 1.375, canvas.height / 1.6);
-  ctx.fillText(((dataStats.squad.win / dataStats.squad.matches) * 100).toFixed(2), canvas.width / 1.19, canvas.height / 1.6);
+  ctx.fillText(((dataStats.squad.wins / dataStats.squad.matches) * 100).toFixed(2), canvas.width / 1.19, canvas.height / 1.6);
   ctx.fillText(dataStats.squad.kills, canvas.width / 1.375, canvas.height / 1.3);
   ctx.fillText(dataStats.squad.kd, canvas.width / 1.19, canvas.height / 1.3);
-  ctx.fillText(dataStats.squad.kills_match, canvas.width / 1.375, canvas.height / 1.1);
+  ctx.fillText(dataStats.squad.kills_per_match, canvas.width / 1.375, canvas.height / 1.1);
   ctx.fillText(dataStats.squad.matches, canvas.width / 1.19, canvas.height / 1.1);
 
   var base64Data = canvas.toDataURL().replace(/^data:image\/png;base64,/, "");
-  require("fs").writeFile('./img/' + dataStats.player + ".png", base64Data, 'base64', function (err) {
+  require("fs").writeFile('./img/' + player + ".png", base64Data, 'base64', function (err) {
     if (err) {
       throw err
     }
-    //postTweetWithMediaStats(dataStats.tweetId, dataStats.userName, dataStats.player);
-    var millis = Date.now() - start;
-    console.log("seconds elapsed = " + millis);
+    postTweetWithMediaStats(tweetId, userName, player);
   });
 }
 
@@ -220,8 +216,8 @@ function onAuthenticated(err, res) {
       //   getStatus();
       // }, 2000);
       Canvas.registerFont(fontFile('ROBOTO-BLACK.TTF'), { family: 'Roboto' });
-      //checkTweet();
+      checkTweet();
       //getStore();
-      getStats("Ninja", "pc", 151615, "FrTeyz");
+      //getStats("Ninja", "pc", 151615, "FrTeyz");
     })
 }
