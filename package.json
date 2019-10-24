@@ -1,8 +1,8 @@
 {
-  "name": "teyzlive",
+  "name": "FortniteStats",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,7 +11,6 @@
   "dependencies": {
     "axios": "^0.19.0",
     "canvas": "^2.6.0",
-    "file-saver": "^2.0.2",
     "fortnite": "^4.3.2",
     "fs": "0.0.1-security",
     "twit": "^2.2.11",
