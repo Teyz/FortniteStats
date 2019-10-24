@@ -11,7 +11,7 @@ var fortnite = new Client('8d2c9df7-ca0a-4e83-8044-58b23fa32870');
 var isFtnStatusTweetedOn = true;
 var isFtnStatusTweetedOff = false;
 
-var start = Date.now();
+var start;
 
 twitter.get('account/verify_credentials', {
   include_entities: false,
@@ -34,52 +34,13 @@ function checkRarity() {
 }
 
 function getStats(name, platform, tweetId, userName) {
+  start = Date.now();
   fortnite.user(name, platform)
     .then(stats => {
       if (stats.code === 404) {
         postTweetError(tweetId, userName, stats.error + ". Please try with a valid player.");
       } else {
-        var dataStats =
-        {
-          'tweetId': tweetId,
-          'userName': userName,
-          'player': name,
-          'lifetime':
-          {
-            'wins': stats.stats.lifetime.wins,
-            'win': ((stats.stats.lifetime.wins / stats.stats.lifetime.matches) * 100).toFixed(2),
-            'kills': stats.stats.lifetime.kills,
-            'kd': stats.stats.lifetime.kd
-          },
-          'solo':
-          {
-            'wins': stats.stats.solo.wins,
-            'win': ((stats.stats.solo.wins / stats.stats.solo.matches) * 100).toFixed(2),
-            'kills': stats.stats.solo.kills,
-            'kd': stats.stats.solo.kd,
-            'kills_match': stats.stats.solo.kills_per_match,
-            'matches': stats.stats.solo.matches
-          },
-          'duo':
-          {
-            'wins': stats.stats.duo.wins,
-            'win': ((stats.stats.duo.wins / stats.stats.duo.matches) * 100).toFixed(2),
-            'kills': stats.stats.duo.kills,
-            'kd': stats.stats.duo.kd,
-            'kills_match': stats.stats.duo.kills_per_match,
-            'matches': stats.stats.duo.matches
-          },
-          'squad':
-          {
-            'wins': stats.stats.squad.wins,
-            'win': ((stats.stats.squad.wins / stats.stats.squad.matches) * 100).toFixed(2),
-            'kills': stats.stats.squad.kills,
-            'kd': stats.stats.squad.kd,
-            'kills_match': stats.stats.squad.kills_per_match,
-            'matches': stats.stats.squad.matches
-          }
-        };
-        createCanvasStats(dataStats);
+        createCanvasStats(stats.stats);
       }
     });
 }
@@ -167,6 +128,10 @@ function fontFile(name) {
   return path.join(__dirname, '/font/', name);
 }
 
+function putStatsOnCanvas(){
+
+}
+
 function createCanvasStats(dataStats) {
   var canvas = Canvas.createCanvas(1920, 1080);
   var ctx = canvas.getContext('2d');
@@ -187,28 +152,28 @@ function createCanvasStats(dataStats) {
   ctx.font = '48pt Roboto';
 
   ctx.fillText(dataStats.lifetime.wins, canvas.width / 1.965, canvas.height / 3.1);
-  ctx.fillText(dataStats.lifetime.win, canvas.width / 1.545, canvas.height / 3.1);
+  ctx.fillText(((dataStats.lifetime.win / dataStats.lifetime.matches) * 100).toFixed(2), canvas.width / 1.545, canvas.height / 3.1);
   ctx.fillText(dataStats.lifetime.kills, canvas.width / 1.279, canvas.height / 3.1);
   ctx.fillText(dataStats.lifetime.kd, canvas.width / 1.097, canvas.height / 3.1);
 
   ctx.textAlign = 'start';
 
   ctx.fillText(dataStats.solo.wins, canvas.width / 10.65, canvas.height / 1.6);
-  ctx.fillText(dataStats.solo.win, canvas.width / 4.9, canvas.height / 1.6);
+  ctx.fillText(((dataStats.solo.win / dataStats.solo.matches) * 100).toFixed(2), canvas.width / 4.9, canvas.height / 1.6);
   ctx.fillText(dataStats.solo.kills, canvas.width / 10.65, canvas.height / 1.3);
   ctx.fillText(dataStats.solo.kd, canvas.width / 4.9, canvas.height / 1.3);
   ctx.fillText(dataStats.solo.kills_match, canvas.width / 10.65, canvas.height / 1.1);
   ctx.fillText(dataStats.solo.matches, canvas.width / 4.9, canvas.height / 1.1);
 
   ctx.fillText(dataStats.duo.wins, canvas.width / 2.44, canvas.height / 1.6);
-  ctx.fillText(dataStats.duo.win, canvas.width / 1.9, canvas.height / 1.6);
+  ctx.fillText(((dataStats.duo.win / dataStats.duo.matches) * 100).toFixed(2), canvas.width / 1.9, canvas.height / 1.6);
   ctx.fillText(dataStats.duo.kills, canvas.width / 2.44, canvas.height / 1.3);
   ctx.fillText(dataStats.duo.kd, canvas.width / 1.9, canvas.height / 1.3);
   ctx.fillText(dataStats.duo.kills_match, canvas.width / 2.44, canvas.height / 1.1);
   ctx.fillText(dataStats.duo.matches, canvas.width / 1.9, canvas.height / 1.1);
 
   ctx.fillText(dataStats.squad.wins, canvas.width / 1.375, canvas.height / 1.6);
-  ctx.fillText(dataStats.squad.win, canvas.width / 1.19, canvas.height / 1.6);
+  ctx.fillText(((dataStats.squad.win / dataStats.squad.matches) * 100).toFixed(2), canvas.width / 1.19, canvas.height / 1.6);
   ctx.fillText(dataStats.squad.kills, canvas.width / 1.375, canvas.height / 1.3);
   ctx.fillText(dataStats.squad.kd, canvas.width / 1.19, canvas.height / 1.3);
   ctx.fillText(dataStats.squad.kills_match, canvas.width / 1.375, canvas.height / 1.1);
