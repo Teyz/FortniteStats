@@ -11,6 +11,8 @@ var fortnite = new Client('8d2c9df7-ca0a-4e83-8044-58b23fa32870');
 var isFtnStatusTweetedOn = true;
 var isFtnStatusTweetedOff = false;
 
+var start = Date.now();
+
 twitter.get('account/verify_credentials', {
   include_entities: false,
   skip_status: true,
@@ -131,7 +133,7 @@ function checkTweetRegex(tweet) {
   var regex = /(#\w+)\s([\w ]+)+\s(\w+)/;
   var pseudo = tweet.replace(regex, "$2");
   var platform = tweet.replace(regex, "$3");
-  if ( (platform === 'pc') || (platform === 'xbox') || (platform === 'psn') ) {
+  if ((platform === 'pc') || (platform === 'xbox') || (platform === 'psn')) {
     var dataUser = { 'name': pseudo, 'platform': platform };
   } else {
     return false;
@@ -181,43 +183,45 @@ function createCanvasStats(dataStats) {
   ctx.fillStyle = gradient;
   ctx.textAlign = 'center';
   ctx.font = '60pt Roboto';
-  ctx.fillText(dataStats.player, canvas.width/4.35, canvas.height/2.95);
+  ctx.fillText(dataStats.player, canvas.width / 4.35, canvas.height / 2.95);
   ctx.font = '48pt Roboto';
 
-  ctx.fillText(dataStats.lifetime.wins, canvas.width/1.965, canvas.height/3.1);
-  ctx.fillText(dataStats.lifetime.win, canvas.width/1.545, canvas.height/3.1);
-  ctx.fillText(dataStats.lifetime.kills, canvas.width/1.279, canvas.height/3.1);
-  ctx.fillText(dataStats.lifetime.kd, canvas.width/1.097, canvas.height/3.1);
+  ctx.fillText(dataStats.lifetime.wins, canvas.width / 1.965, canvas.height / 3.1);
+  ctx.fillText(dataStats.lifetime.win, canvas.width / 1.545, canvas.height / 3.1);
+  ctx.fillText(dataStats.lifetime.kills, canvas.width / 1.279, canvas.height / 3.1);
+  ctx.fillText(dataStats.lifetime.kd, canvas.width / 1.097, canvas.height / 3.1);
 
   ctx.textAlign = 'start';
 
-  ctx.fillText(dataStats.solo.wins, canvas.width/10.65, canvas.height/1.6);
-  ctx.fillText(dataStats.solo.win, canvas.width/4.9, canvas.height/1.6);
-  ctx.fillText(dataStats.solo.kills, canvas.width/10.65, canvas.height/1.3);
-  ctx.fillText(dataStats.solo.kd, canvas.width/4.9, canvas.height/1.3);
-  ctx.fillText(dataStats.solo.kills_match, canvas.width/10.65, canvas.height/1.1);
-  ctx.fillText(dataStats.solo.matches, canvas.width/4.9, canvas.height/1.1);
+  ctx.fillText(dataStats.solo.wins, canvas.width / 10.65, canvas.height / 1.6);
+  ctx.fillText(dataStats.solo.win, canvas.width / 4.9, canvas.height / 1.6);
+  ctx.fillText(dataStats.solo.kills, canvas.width / 10.65, canvas.height / 1.3);
+  ctx.fillText(dataStats.solo.kd, canvas.width / 4.9, canvas.height / 1.3);
+  ctx.fillText(dataStats.solo.kills_match, canvas.width / 10.65, canvas.height / 1.1);
+  ctx.fillText(dataStats.solo.matches, canvas.width / 4.9, canvas.height / 1.1);
 
-  ctx.fillText(dataStats.duo.wins, canvas.width/2.44, canvas.height/1.6);
-  ctx.fillText(dataStats.duo.win, canvas.width/1.9, canvas.height/1.6);
-  ctx.fillText(dataStats.duo.kills, canvas.width/2.44, canvas.height/1.3);
-  ctx.fillText(dataStats.duo.kd, canvas.width/1.9, canvas.height/1.3);
-  ctx.fillText(dataStats.duo.kills_match, canvas.width/2.44, canvas.height/1.1);
-  ctx.fillText(dataStats.duo.matches, canvas.width/1.9, canvas.height/1.1);
+  ctx.fillText(dataStats.duo.wins, canvas.width / 2.44, canvas.height / 1.6);
+  ctx.fillText(dataStats.duo.win, canvas.width / 1.9, canvas.height / 1.6);
+  ctx.fillText(dataStats.duo.kills, canvas.width / 2.44, canvas.height / 1.3);
+  ctx.fillText(dataStats.duo.kd, canvas.width / 1.9, canvas.height / 1.3);
+  ctx.fillText(dataStats.duo.kills_match, canvas.width / 2.44, canvas.height / 1.1);
+  ctx.fillText(dataStats.duo.matches, canvas.width / 1.9, canvas.height / 1.1);
 
-  ctx.fillText(dataStats.squad.wins, canvas.width/1.375, canvas.height/1.6);
-  ctx.fillText(dataStats.squad.win, canvas.width/1.19, canvas.height/1.6);
-  ctx.fillText(dataStats.squad.kills, canvas.width/1.375, canvas.height/1.3);
-  ctx.fillText(dataStats.squad.kd, canvas.width/1.19, canvas.height/1.3);
-  ctx.fillText(dataStats.squad.kills_match, canvas.width/1.375, canvas.height/1.1);
-  ctx.fillText(dataStats.squad .matches, canvas.width/1.19, canvas.height/1.1);
+  ctx.fillText(dataStats.squad.wins, canvas.width / 1.375, canvas.height / 1.6);
+  ctx.fillText(dataStats.squad.win, canvas.width / 1.19, canvas.height / 1.6);
+  ctx.fillText(dataStats.squad.kills, canvas.width / 1.375, canvas.height / 1.3);
+  ctx.fillText(dataStats.squad.kd, canvas.width / 1.19, canvas.height / 1.3);
+  ctx.fillText(dataStats.squad.kills_match, canvas.width / 1.375, canvas.height / 1.1);
+  ctx.fillText(dataStats.squad.matches, canvas.width / 1.19, canvas.height / 1.1);
 
   var base64Data = canvas.toDataURL().replace(/^data:image\/png;base64,/, "");
   require("fs").writeFile('./img/' + dataStats.player + ".png", base64Data, 'base64', function (err) {
     if (err) {
       throw err
     }
-    postTweetWithMediaStats(dataStats.tweetId, dataStats.userName, dataStats.player);
+    //postTweetWithMediaStats(dataStats.tweetId, dataStats.userName, dataStats.player);
+    var millis = Date.now() - start;
+    console.log("seconds elapsed = " + millis);
   });
 }
 
