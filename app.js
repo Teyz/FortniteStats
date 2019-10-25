@@ -91,7 +91,7 @@ function postTweetWithMediaStats(tweetId, userName, player) {
               console.log(err);
             }
           });
-          checkSpamData[userName]++;
+          checkSpamData[userName].nbTweet++;
           nbTotalTweeted++;
           var millis = Date.now() - start;
           console.log("Seconds elapsed = " + millis + " Total tweeted = " + nbTotalTweeted);
@@ -139,8 +139,14 @@ function checkTweet() {
     if (dataUser === false) {
       postTweetError(tweet.id_str, tweet.user.screen_name, 'Invalid platform. Supported platforms are: pc / xbox / psn.');
     } else {
-      checkSpamData[tweet.user.screen_name] = 0;
-      getStats(dataUser.name, dataUser.platform, tweet.id_str, tweet.user.screen_name);
+      if(!checkSpamData[tweet.user.screen_name]){
+        checkSpamData[tweet.user.screen_name] = { 'nbTweet': 0, 'first_tweet': Date.now() };
+      }
+      if(checkSpam(tweet.user.screen_name)){
+        getStats(dataUser.name, dataUser.platform, tweet.id_str, tweet.user.screen_name);
+      } else {
+        postTweetError(tweet.id_str, tweet.user.screen_name, "Please do not spam ! You can use #FortniteStats 4 times every 5 minutes.");
+      }
     }
   });
 }
@@ -157,9 +163,14 @@ function checkTweetRegex(tweet) {
   return dataUser;
 }
 
-function checkSpam() {
-  start = Date.now();
-
+function checkSpam(userName) {
+  console.log(userName.nbTweet);
+  console.log(Date.now() - userName.first_tweet);
+  if( (userName.nbTweet==2 ) && ((Date.now() - userName.first_tweet)<300000) ){
+    return false;
+  } else {
+    return true;
+  }
 }
 
 function fontFile(name) {
