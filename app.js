@@ -4,7 +4,7 @@ const axios = require('axios');
 const Client = require('fortnite');
 const Canvas = require('canvas');
 const path = require('path');
-const http = require('http'); 
+const http = require('http');
 
 var twitter = new Twitter(config);
 var fortnite = new Client('8d2c9df7-ca0a-4e83-8044-58b23fa32870');
@@ -140,10 +140,10 @@ function checkTweet() {
     if (dataUser === false) {
       postTweetError(tweet.id_str, tweet.user.screen_name, 'Invalid platform. Supported platforms are: pc / xbox / psn.');
     } else {
-      if(!checkSpamData[tweet.user.screen_name]){
+      if (!checkSpamData[tweet.user.screen_name]) {
         checkSpamData[tweet.user.screen_name] = { 'nbTweet': 0, 'first_tweet': Date.now() };
       }
-      if(!checkSpam(tweet.user.screen_name)){
+      if (!checkSpam(tweet.user.screen_name)) {
         getStats(dataUser.name, dataUser.platform, tweet.id_str, tweet.user.screen_name);
       } else {
         postTweetError(tweet.id_str, tweet.user.screen_name, "Please do not spam ! You can use #FortniteStats 4 times every 5 minutes.");
@@ -167,7 +167,7 @@ function checkTweetRegex(tweet) {
 function checkSpam(userName) {
   console.log(checkSpamData[userName].nbTweet);
   console.log(Date.now() - checkSpamData[userName].first_tweet);
-  if( (checkSpamData[userName].nbTweet==2 ) && ((Date.now() - checkSpamData[userName].first_tweet)<300000) ){
+  if ((checkSpamData[userName].nbTweet == 2) && ((Date.now() - checkSpamData[userName].first_tweet) < 300000)) {
     return true;
   } else {
     return false;
@@ -234,6 +234,19 @@ function createCanvasStats(dataStats, player, tweetId, userName) {
   });
 }
 
+function apiStats() {
+  http.createServer(function (request, response) {
+    response.writeHead(200, {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*'
+    });
+    require("fs").readFile('data.json', function (err, content) {
+      response.write(content);
+      response.end();
+    });
+  }).listen(8080);
+}
+
 function onAuthenticated(err, res) {
   if (err) {
     throw err
@@ -253,11 +266,6 @@ function onAuthenticated(err, res) {
       //getStats("Ninja", "pc", 151615, "FrTeyz");
       //statusCode: 403
       //support@tracker.network
-      //for (var i = 0; i < 10; i++) {
-      //getStats("Ninja", "pc", 1615, "FrTeyz");
-      //}
-      //http.createServer(function (req, res) {
-        //res.setHeader('Content-Type', 'application/json');
-      //}).listen(8080);
+      apiStats();
     })
 }

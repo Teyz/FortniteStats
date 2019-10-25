@@ -1,0 +1,8 @@
+{
+    "author": "Jalal.Hejazi",
+    "info": "Response header info",
+    "Content-Type": "text/json",
+    "X-Powered-By": "nodejs",
+    "Access-Control-Allow-Origin": "*",
+    "next": "REST The WEB"
+}
