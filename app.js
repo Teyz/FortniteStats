@@ -142,7 +142,7 @@ function checkTweet() {
       if(!checkSpamData[tweet.user.screen_name]){
         checkSpamData[tweet.user.screen_name] = { 'nbTweet': 0, 'first_tweet': Date.now() };
       }
-      if(checkSpam(tweet.user.screen_name)){
+      if(!checkSpam(tweet.user.screen_name)){
         getStats(dataUser.name, dataUser.platform, tweet.id_str, tweet.user.screen_name);
       } else {
         postTweetError(tweet.id_str, tweet.user.screen_name, "Please do not spam ! You can use #FortniteStats 4 times every 5 minutes.");
@@ -164,12 +164,12 @@ function checkTweetRegex(tweet) {
 }
 
 function checkSpam(userName) {
-  console.log(userName.nbTweet);
-  console.log(Date.now() - userName.first_tweet);
-  if( (userName.nbTweet==2 ) && ((Date.now() - userName.first_tweet)<300000) ){
-    return false;
-  } else {
+  console.log(checkSpamData[userName].nbTweet);
+  console.log(Date.now() - checkSpamData[userName].first_tweet);
+  if( (checkSpamData[userName].nbTweet==2 ) && ((Date.now() - checkSpamData[userName].first_tweet)<300000) ){
     return true;
+  } else {
+    return false;
   }
 }
 
