@@ -14,6 +14,8 @@ var isFtnStatusTweetedOff = false;
 var start;
 var nbTotalTweeted = 0;
 
+var checkSpamData = {};
+
 twitter.get('account/verify_credentials', {
   include_entities: false,
   skip_status: true,
@@ -89,13 +91,15 @@ function postTweetWithMediaStats(tweetId, userName, player) {
               console.log(err);
             }
           });
+          checkSpamData[userName]++;
+          nbTotalTweeted++;
+          var millis = Date.now() - start;
+          console.log("Seconds elapsed = " + millis + " Total tweeted = " + nbTotalTweeted);
+          console.log(checkSpamData);
         }
       });
     }
   });
-  nbTotalTweeted++;
-  var millis = Date.now() - start;
-  console.log("Seconds elapsed = " + millis + " Total tweeted = " + nbTotalTweeted);
   return false;
 }
 
@@ -135,6 +139,7 @@ function checkTweet() {
     if (dataUser === false) {
       postTweetError(tweet.id_str, tweet.user.screen_name, 'Invalid platform. Supported platforms are: pc / xbox / psn.');
     } else {
+      checkSpamData[tweet.user.screen_name] = 0;
       getStats(dataUser.name, dataUser.platform, tweet.id_str, tweet.user.screen_name);
     }
   });
