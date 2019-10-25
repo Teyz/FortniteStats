@@ -4,6 +4,7 @@ const axios = require('axios');
 const Client = require('fortnite');
 const Canvas = require('canvas');
 const path = require('path');
+const http = require('http'); 
 
 var twitter = new Twitter(config);
 var fortnite = new Client('8d2c9df7-ca0a-4e83-8044-58b23fa32870');
@@ -246,8 +247,8 @@ function onAuthenticated(err, res) {
       // setInterval(() => {
       //   getStatus();
       // }, 2000);
-      Canvas.registerFont(fontFile('ROBOTO-BLACK.TTF'), { family: 'Roboto' });
-      checkTweet();
+      //Canvas.registerFont(fontFile('ROBOTO-BLACK.TTF'), { family: 'Roboto' });
+      //checkTweet();
       //getStore();
       //getStats("Ninja", "pc", 151615, "FrTeyz");
       //statusCode: 403
@@ -255,5 +256,8 @@ function onAuthenticated(err, res) {
       //for (var i = 0; i < 10; i++) {
       //getStats("Ninja", "pc", 1615, "FrTeyz");
       //}
+      //http.createServer(function (req, res) {
+        //res.setHeader('Content-Type', 'application/json');
+      //}).listen(8080);
     })
 }
