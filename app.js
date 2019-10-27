@@ -234,17 +234,41 @@ function createCanvasStats(dataStats, player, tweetId, userName) {
   });
 }
 
-function apiStats() {
-  http.createServer(function (request, response) {
+function apiLaunch() {
+  const {createServer} = require('http');
+  const server = createServer().listen(8080);
+  server.on('request', (request, response) => {
     response.writeHead(200, {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*'
     });
-    require("fs").readFile('data.json', function (err, content) {
-      response.write(content);
-      response.end();
-    });
-  }).listen(8080);
+    if (request.url === '/status') {
+      response.end(JSON.stringify(getStatus()));
+    }
+    else if (request.url === '/stats') {
+      var test;
+      getTotalTweet().then(data => {
+        test = data.data[0].user.statuses_count;
+      });
+      console.log(test);
+      // var dataStats = { 'statuses_count': totalTweet};
+      // response.end(JSON.stringify(dataStats));
+    }
+    else if (request.url === '/fortnite') {
+      var stream = twitter.stream('statuses/filter', { track: '#Fortnite' })
+      stream.on('tweet', function (tweet) {
+        response.end(JSON.stringify(tweet));
+      });
+    }
+  });
+}
+
+function getStatus(){
+  return JSON.parse('{"status":true}');
+}
+
+function getTotalTweet(){
+   return twitter.get('https://api.twitter.com/1.1/statuses/user_timeline.json');
 }
 
 function onAuthenticated(err, res) {
@@ -266,6 +290,6 @@ function onAuthenticated(err, res) {
       //getStats("Ninja", "pc", 151615, "FrTeyz");
       //statusCode: 403
       //support@tracker.network
-      apiStats();
+      apiLaunch();
     })
 }
