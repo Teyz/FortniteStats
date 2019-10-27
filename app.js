@@ -258,9 +258,8 @@ function apiLaunch() {
       var urlParts = url.parse(request.url, true),
       urlParams = urlParts.query, 
       urlPathname = urlParts.pathname;
-      console.log(urlPathname, urlParams);
       if(urlPathname === '/postTweet'){
-        
+        response.end(JSON.stringify(urlParams));
       }
     }
   });
