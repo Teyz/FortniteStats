@@ -5,6 +5,7 @@ const Client = require('fortnite');
 const Canvas = require('canvas');
 const path = require('path');
 const {createServer} = require('http');
+const url = require('url');
 const server = createServer().listen(8080);
 
 var twitter = new Twitter(config);
@@ -252,6 +253,15 @@ function apiLaunch() {
       stream.on('tweet', function (tweet) {
         response.end(JSON.stringify(tweet));
       });
+    }
+    else {
+      var urlParts = url.parse(request.url, true),
+      urlParams = urlParts.query, 
+      urlPathname = urlParts.pathname;
+      console.log(urlPathname, urlParams);
+      if(urlPathname === '/postTweet'){
+        
+      }
     }
   });
 }
