@@ -4,7 +4,8 @@ const axios = require('axios');
 const Client = require('fortnite');
 const Canvas = require('canvas');
 const path = require('path');
-const http = require('http');
+const {createServer} = require('http');
+const server = createServer().listen(8080);
 
 var twitter = new Twitter(config);
 var fortnite = new Client('8d2c9df7-ca0a-4e83-8044-58b23fa32870');
@@ -13,7 +14,6 @@ var isFtnStatusTweetedOn = true;
 var isFtnStatusTweetedOff = false;
 
 var start;
-var nbTotalTweeted = 0;
 
 var checkSpamData = {};
 
@@ -93,9 +93,8 @@ function postTweetWithMediaStats(tweetId, userName, player) {
             }
           });
           checkSpamData[userName].nbTweet++;
-          nbTotalTweeted++;
           var millis = Date.now() - start;
-          console.log("Seconds elapsed = " + millis + " Total tweeted = " + nbTotalTweeted);
+          console.log("Seconds elapsed = " + millis);
           console.log(checkSpamData);
         }
       });
@@ -235,8 +234,6 @@ function createCanvasStats(dataStats, player, tweetId, userName) {
 }
 
 function apiLaunch() {
-  const {createServer} = require('http');
-  const server = createServer().listen(8080);
   server.on('request', (request, response) => {
     response.writeHead(200, {
       'Content-Type': 'application/json',
@@ -246,13 +243,9 @@ function apiLaunch() {
       response.end(JSON.stringify(getStatus()));
     }
     else if (request.url === '/stats') {
-      var test;
       getTotalTweet().then(data => {
-        test = data.data[0].user.statuses_count;
+        response.end(JSON.stringify({ 'statuses_count': data.data[0].user.statuses_count}));
       });
-      console.log(test);
-      // var dataStats = { 'statuses_count': totalTweet};
-      // response.end(JSON.stringify(dataStats));
     }
     else if (request.url === '/fortnite') {
       var stream = twitter.stream('statuses/filter', { track: '#Fortnite' })
@@ -269,6 +262,34 @@ function getStatus(){
 
 function getTotalTweet(){
    return twitter.get('https://api.twitter.com/1.1/statuses/user_timeline.json');
+}
+
+function getTotalEngagement(){
+  return twitter.post('https://data-api.twitter.com/insights/engagement/totals');
+}
+
+function postTweet(message){
+  T.post('statuses/update', { status: message }, function(err, data, response) {
+    if (err) {
+      throw err
+    } else {
+      console.log(data);
+    }
+  });
+}
+
+function postTweetWithMedia(message, img) {
+  twitter.postMediaChunked({ file_path: filePath }, function (err, data, response) {
+    if (err) throw err;
+    var params = { 
+      status: message, 
+      media_ids: img 
+    }
+    twitter.post('statuses/update', params, function (err, data, response) {
+      if (err) throw err;
+    });
+  });
+  return false;
 }
 
 function onAuthenticated(err, res) {
