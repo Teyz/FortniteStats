@@ -259,7 +259,15 @@ function apiLaunch() {
       urlParams = urlParts.query, 
       urlPathname = urlParts.pathname;
       if(urlPathname === '/postTweet'){
-        response.end(JSON.stringify(urlParams));
+        if(urlParams.media==false){
+          postTweet(urlParams.message).then(data => {
+            response.end(JSON.stringify({'status': data.resp.statusCode}));
+          });
+        } else {
+          postTweetWithMedia(urlParams.message, urlParams.media).then(data => {
+            response.end(JSON.stringify({'status': data.resp.statusCode}));
+          });
+        }
       }
     }
   });
@@ -278,27 +286,20 @@ function getTotalEngagement(){
 }
 
 function postTweet(message){
-  T.post('statuses/update', { status: message }, function(err, data, response) {
-    if (err) {
-      throw err
-    } else {
-      console.log(data);
-    }
-  });
+  return twitter.post('statuses/update', { status: message });
 }
 
 function postTweetWithMedia(message, img) {
-  twitter.postMediaChunked({ file_path: filePath }, function (err, data, response) {
+  twitter.postMediaChunked({ file_path: img }, function (err, data, response) {
     if (err) throw err;
     var params = { 
       status: message, 
-      media_ids: img 
+      media_ids: file_path 
     }
     twitter.post('statuses/update', params, function (err, data, response) {
       if (err) throw err;
     });
   });
-  return false;
 }
 
 function onAuthenticated(err, res) {
