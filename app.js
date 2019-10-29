@@ -260,7 +260,11 @@ function apiLaunch() {
         urlPathname = urlParts.pathname;
       if (urlPathname === '/postTweet') {
         postTweet(urlParams.message).then(data => {
-          response.end(JSON.stringify({ 'status': data.resp.statusCode }));
+          if (data.resp.statusCode == 200) {
+            response.end(JSON.stringify({ 'status': data.resp.statusCode }));
+          }
+        }).catch(err => {
+          response.end(JSON.stringify({ 'status': err.statusCode }));
         });
       }
     }
