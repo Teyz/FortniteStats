@@ -4,7 +4,7 @@ const axios = require('axios');
 const Client = require('fortnite');
 const Canvas = require('canvas');
 const path = require('path');
-const {createServer} = require('http');
+const { createServer } = require('http');
 const url = require('url');
 const server = createServer().listen(8080);
 
@@ -245,7 +245,7 @@ function apiLaunch() {
     }
     else if (request.url === '/stats') {
       getTotalTweet().then(data => {
-        response.end(JSON.stringify({ 'statuses_count': data.data[0].user.statuses_count}));
+        response.end(JSON.stringify({ 'statuses_count': data.data[0].user.statuses_count }));
       });
     }
     else if (request.url === '/fortnite') {
@@ -256,50 +256,31 @@ function apiLaunch() {
     }
     else {
       var urlParts = url.parse(request.url, true),
-      urlParams = urlParts.query, 
-      urlPathname = urlParts.pathname;
-      if(urlPathname === '/postTweet'){
-        if(urlParams.media==false){
-          postTweet(urlParams.message).then(data => {
-            response.end(JSON.stringify({'status': data.resp.statusCode}));
-          });
-        } else {
-          postTweetWithMedia(urlParams.message, urlParams.media).then(data => {
-            response.end(JSON.stringify({'status': data.resp.statusCode}));
-          });
-        }
+        urlParams = urlParts.query,
+        urlPathname = urlParts.pathname;
+      if (urlPathname === '/postTweet') {
+        postTweet(urlParams.message).then(data => {
+          response.end(JSON.stringify({ 'status': data.resp.statusCode }));
+        });
       }
     }
   });
 }
 
-function getStatus(){
+function getStatus() {
   return JSON.parse('{"status":true}');
 }
 
-function getTotalTweet(){
-   return twitter.get('https://api.twitter.com/1.1/statuses/user_timeline.json');
+function getTotalTweet() {
+  return twitter.get('https://api.twitter.com/1.1/statuses/user_timeline.json');
 }
 
-function getTotalEngagement(){
+function getTotalEngagement() {
   return twitter.post('https://data-api.twitter.com/insights/engagement/totals');
 }
 
-function postTweet(message){
+function postTweet(message) {
   return twitter.post('statuses/update', { status: message });
-}
-
-function postTweetWithMedia(message, img) {
-  twitter.postMediaChunked({ file_path: img }, function (err, data, response) {
-    if (err) throw err;
-    var params = { 
-      status: message, 
-      media_ids: file_path 
-    }
-    twitter.post('statuses/update', params, function (err, data, response) {
-      if (err) throw err;
-    });
-  });
 }
 
 function onAuthenticated(err, res) {
