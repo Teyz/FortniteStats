@@ -253,8 +253,15 @@ function apiLaunch() {
       stream.on('tweet', function (tweet) {
         response.end(JSON.stringify(tweet));
       });
-    }
-    else {
+    } else if (request.url === '/getLastTweet') {
+      getLastTweet().then(data => {
+        response.end(JSON.stringify(data));
+      });
+    } else if (request.url === '/getAllTweet') {
+      getAllTweet().then(data => {
+        response.end(JSON.stringify(data));
+      });
+    } else {
       var urlParts = url.parse(request.url, true),
         urlParams = urlParts.query,
         urlPathname = urlParts.pathname;
@@ -285,6 +292,14 @@ function getTotalEngagement() {
 
 function postTweet(message) {
   return twitter.post('statuses/update', { status: message });
+}
+
+function getLastTweet(){
+  return twitter.get('statuses/user_timeline', { screen_name: 'FNBRStats', count: 5 });
+}
+
+function getAllTweet(){
+  return twitter.get('search/tweets', { q: '#FortniteStats', count: 10 });
 }
 
 function onAuthenticated(err, res) {
