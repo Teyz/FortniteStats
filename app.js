@@ -153,9 +153,10 @@ function checkTweet() {
 }
 
 function checkTweetRegex(tweet) {
-  var regex = /(#\w+)\s([\w ]+)+\s(\w+)/;
+  var regex = /(#\w+)\s([\w.\-_ ]+)+\s(\w+)/;
   var pseudo = tweet.replace(regex, "$2");
   var platform = tweet.replace(regex, "$3");
+  console.log(pseudo, platform);
   if ((platform === 'pc') || (platform === 'xbox') || (platform === 'psn')) {
     var dataUser = { 'name': pseudo, 'platform': platform };
   } else {
@@ -165,9 +166,7 @@ function checkTweetRegex(tweet) {
 }
 
 function checkSpam(userName) {
-  console.log(checkSpamData[userName].nbTweet);
-  console.log(Date.now() - checkSpamData[userName].first_tweet);
-  if ((checkSpamData[userName].nbTweet == 2) && ((Date.now() - checkSpamData[userName].first_tweet) < 300000)) {
+  if ((checkSpamData[userName].nbTweet == 5) && ((Date.now() - checkSpamData[userName].first_tweet) < 300000)) {
     return true;
   } else {
     return false;
@@ -244,8 +243,8 @@ function apiLaunch() {
       response.end(JSON.stringify(getStatus()));
     }
     else if (request.url === '/stats') {
-      getTotalTweet().then(data => {
-        response.end(JSON.stringify({ 'statuses_count': data.data[0].user.statuses_count }));
+      getAccountStats().then(data => {
+        response.end(JSON.stringify(data.data));
       });
     }
     else if (request.url === '/fortnite') {
@@ -259,6 +258,10 @@ function apiLaunch() {
       });
     } else if (request.url === '/getAllTweet') {
       getAllTweet().then(data => {
+        response.end(JSON.stringify(data));
+      });
+    } else if (request.url === '/getLastFollowers') {
+      getLastFollowers().then(data => {
         response.end(JSON.stringify(data));
       });
     } else {
@@ -282,8 +285,8 @@ function getStatus() {
   return JSON.parse('{"status":true}');
 }
 
-function getTotalTweet() {
-  return twitter.get('https://api.twitter.com/1.1/statuses/user_timeline.json');
+function getAccountStats() {
+  return twitter.get('users/show', { screen_name: 'FNBRStats' });
 }
 
 function getTotalEngagement() {
@@ -294,12 +297,16 @@ function postTweet(message) {
   return twitter.post('statuses/update', { status: message });
 }
 
-function getLastTweet(){
+function getLastTweet() {
   return twitter.get('statuses/user_timeline', { screen_name: 'FNBRStats', count: 5 });
 }
 
-function getAllTweet(){
+function getAllTweet() {
   return twitter.get('search/tweets', { q: '#FortniteStats', count: 10 });
+}
+
+function getLastFollowers(){
+  return twitter.get('https://api.twitter.com/1.1/followers/list.json', { screen_name: 'FNBRStats'});
 }
 
 function onAuthenticated(err, res) {
@@ -315,12 +322,12 @@ function onAuthenticated(err, res) {
       // setInterval(() => {
       //   getStatus();
       // }, 2000);
-      //Canvas.registerFont(fontFile('ROBOTO-BLACK.TTF'), { family: 'Roboto' });
-      //checkTweet();
+      Canvas.registerFont(fontFile('ROBOTO-BLACK.TTF'), { family: 'Roboto' });
+      checkTweet();
       //getStore();
       //getStats("Ninja", "pc", 151615, "FrTeyz");
       //statusCode: 403
       //support@tracker.network
-      apiLaunch();
+      //apiLaunch();
     })
 }
