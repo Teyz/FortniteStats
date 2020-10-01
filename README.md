@@ -4,6 +4,11 @@ A twitter bot allowing users to retrieve their Fortnite statistics. Every day th
 
 ## Getting Started
 
+### Install project 
+
+npm i 
+node app.js
+
 ### Get Fortnite Stats 
 
 To use the bot, you must tweet: #FortniteStats {name} {pc/xb1/psn}
